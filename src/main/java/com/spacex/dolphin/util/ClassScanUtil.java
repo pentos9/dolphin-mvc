@@ -11,7 +11,7 @@ import java.io.File;
 import java.net.URL;
 import java.util.List;
 
-public class ClassUtil {
+public class ClassScanUtil {
     public static List<String> scanPackage(String packageName) {
 
         List<String> classNames = Lists.newArrayList();

@@ -10,7 +10,7 @@ import org.apache.commons.lang3.StringUtils;
 import java.util.List;
 import java.util.Map;
 
-public class BeanFactoryUtil {
+public class BeanMapUtil {
     public static Map<String, Object> doInstance(List<String> classNameList) {
         if (CollectionUtils.isEmpty(classNameList)) {
             return Maps.newHashMap();
@@ -22,7 +22,7 @@ public class BeanFactoryUtil {
             try {
                 Class clazz = Class.forName(className);
                 if (clazz.isAnnotationPresent(Controller.class)) {
-                    String lowerClassName = StringUtil.lowerFirstChar(clazz.getSimpleName());
+                    String lowerClassName = DolphinStringUtil.lowerFirstChar(clazz.getSimpleName());
                     instanceMap.put(lowerClassName, clazz.newInstance());
                 } else if (clazz.isAnnotationPresent(Service.class)) {
                     Service service = (Service) clazz.getAnnotation(Service.class);
@@ -32,12 +32,12 @@ public class BeanFactoryUtil {
                     } else {
                         Class[] inters = clazz.getInterfaces();
                         for (Class c : inters) {
-                            instanceMap.put(StringUtil.lowerFirstChar(c.getSimpleName()), clazz.newInstance());
+                            instanceMap.put(DolphinStringUtil.lowerFirstChar(c.getSimpleName()), clazz.newInstance());
                             break;
                         }
                     }
                 } else if (clazz.isAnnotationPresent(Component.class)) {
-                    String lowerClassName = StringUtil.lowerFirstChar(clazz.getSimpleName());
+                    String lowerClassName = DolphinStringUtil.lowerFirstChar(clazz.getSimpleName());
                     instanceMap.put(lowerClassName, clazz.newInstance());
                 }
             } catch (ClassNotFoundException | IllegalAccessException | InstantiationException e) {

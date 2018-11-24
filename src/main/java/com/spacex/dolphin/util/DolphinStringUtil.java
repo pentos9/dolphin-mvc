@@ -1,6 +1,6 @@
 package com.spacex.dolphin.util;
 
-public class StringUtil {
+public class DolphinStringUtil {
     public static String lowerFirstChar(String text) {
         char[] chars = text.toCharArray();
         chars[0] += 32;

@@ -1,52 +1,39 @@
-<configuration>
+<configuration scan="true" scanPeriod="60 seconds" debug="false">
+
+    <property name="LOG_PATH" value="/Users/lucas/projects/dolphin-mvc" />
 
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
-        <!-- encoders are assigned the type
-     ch.qos.logback.classic.encoder.PatternLayoutEncoder by default -->
-        <encoder>
-            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
-        </encoder>
-    </appender>
-
-    <appender name="FILE-BACKUP" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>/Users/lucas/projects/dolphin-mvc/logFile.log</file>
-        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <!-- daily rollover -->
-            <fileNamePattern>/Users/lucas/projects/dolphin-mvc/logFile.%d{yyyy-MM-dd}.log</fileNamePattern>
-
-            <!-- keep 1 days' worth of history -->
-            <maxHistory>5</maxHistory>
-        </rollingPolicy>
 
         <encoder>
-            <pattern>%d{HH:mm:ss.SSS} %-4relative [%thread] %-5level %logger{35} - %msg%n</pattern>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
         </encoder>
     </appender>
 
     <!-- 滚动文件输出配置 -->
     <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>/Users/lucas/projects/dolphin-mvc/logFile.log</file>
+        <file>${LOG_PATH}/logFile.log</file>
 
         <!-- 设置滚动策略 -->
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <!--设置日志命名模式-->
-            <fileNamePattern>/Users/lucas/projects/dolphin-mvc/logFile.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <fileNamePattern>${LOG_PATH}/logFile.%d{yyyy-MM-dd}.log</fileNamePattern>
             <!--最多保留30天log-->
             <maxHistory>30</maxHistory>
         </rollingPolicy>
 
-        <!-- 超过150MB时，触发滚动策略 -->
+        <!-- 超过1024MB时，触发滚动策略 -->
         <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
-            <maxFileSize>150</maxFileSize>
+            <maxFileSize>50MB</maxFileSize>
         </triggeringPolicy>
 
         <!-- 日志内容格式 -->
         <encoder>
-            <pattern>%d [%p] %-5level %logger - %msg%newline</pattern>
+            <!--<pattern>%d [%p] %-5level %logger - %msg%newline</pattern>-->
+            <pattern> %d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36}.%M - %msg%n</pattern>
         </encoder>
     </appender>
 
-    <root level="info" additivity="false">
+    <root level="info">
         <appender-ref ref="STDOUT"/>
         <appender-ref ref="FILE"/>
     </root>

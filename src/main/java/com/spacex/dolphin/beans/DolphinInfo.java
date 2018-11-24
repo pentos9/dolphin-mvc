@@ -1,4 +1,4 @@
-package com.spacex.dolphin.bean;
+package com.spacex.dolphin.beans;
 
 public class DolphinInfo {
     private String name;

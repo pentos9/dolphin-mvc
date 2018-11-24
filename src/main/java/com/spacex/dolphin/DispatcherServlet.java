@@ -3,6 +3,7 @@ package com.spacex.dolphin;
 import com.spacex.dolphin.bean.DolphinInfo;
 import com.spacex.dolphin.util.BeanMapUtil;
 import com.spacex.dolphin.util.ClassScanUtil;
+import com.spacex.dolphin.util.DependenceInjectUtil;
 import com.spacex.dolphin.util.JsonUtil;
 import com.spacex.dolphin.util.PrintUtil;
 import com.spacex.dolphin.util.ServletPrintUtil;
@@ -21,7 +22,8 @@ public class DispatcherServlet extends HttpServlet {
     public void init(ServletConfig config) throws ServletException {
         PrintUtil.print("DispatcherServlet#init invoked!");
         List<String> classNames = ClassScanUtil.scanPackage(config.getInitParameter("scanPackage"));
-        Map<String, Object> beanMap = BeanMapUtil.doInstance(classNames);
+        Map<String, Object> beanInstanceMap = BeanMapUtil.doInstance(classNames);
+        DependenceInjectUtil.doInject(beanInstanceMap);
     }
 
     @Override

@@ -39,11 +39,18 @@
         </dependency>
 
         <!--asm for annotation process-->
+        <!--<dependency>-->
+            <!--<groupId>org.ow2.asm</groupId>-->
+            <!--<artifactId>asm</artifactId>-->
+            <!--<version>5.2</version>-->
+        <!--</dependency>-->
         <dependency>
-            <groupId>org.ow2.asm</groupId>
+            <groupId>asm</groupId>
             <artifactId>asm</artifactId>
-            <version>5.1</version>
+            <version>3.1</version>
         </dependency>
+
+
 
 
         <!-- apache commons -->

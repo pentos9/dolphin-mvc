@@ -51,7 +51,7 @@ public class HandlerMappingUtil {
                 Annotation[][] annotations = method.getParameterAnnotations();
                 Map<String, Integer> paramMap = Maps.newHashMap();
 
-                String[] paramNames = ParameterNameUtil.getMethodParameterNamesByAsm(beanClass, method);
+                String[] paramNames = ParameterNameUtil.getMethodParameterNamesByAsm4(beanClass, method);
                 Class[] paramTypes = method.getParameterTypes();
 
                 for (int i = 0; i < annotations.length; i++) {
@@ -80,7 +80,7 @@ public class HandlerMappingUtil {
 
                 }
 
-                HandlerModel handlerModel = new HandlerModel(method, beanClass, paramMap);
+                HandlerModel handlerModel = new HandlerModel(method, beanInstance, paramMap);
                 handlerMappingMap.put(realUrl, handlerModel);
 
             }

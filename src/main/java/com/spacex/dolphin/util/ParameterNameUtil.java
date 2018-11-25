@@ -1,69 +1,76 @@
 package com.spacex.dolphin.util;
 
-import jdk.internal.org.objectweb.asm.ClassReader;
-import jdk.internal.org.objectweb.asm.ClassVisitor;
-import jdk.internal.org.objectweb.asm.Label;
-import jdk.internal.org.objectweb.asm.MethodVisitor;
-import jdk.internal.org.objectweb.asm.Opcodes;
-import jdk.internal.org.objectweb.asm.Type;
+import org.objectweb.asm.ClassAdapter;
+import org.objectweb.asm.ClassReader;
+import org.objectweb.asm.ClassWriter;
+import org.objectweb.asm.Label;
+import org.objectweb.asm.MethodAdapter;
+import org.objectweb.asm.MethodVisitor;
+import org.objectweb.asm.Type;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.Arrays;
 
 public class ParameterNameUtil {
-    public static String[] getMethodParameterNamesByAsm(Class<?> clazz, Method method) {
-        final Class<?>[] paramerTypes = method.getParameterTypes();
 
-        if (paramerTypes == null || paramerTypes.length == 0) {
-            return null;
-        }
+    public static String[] getMethodParameterNamesByAsm4(final Class clazz, final Method method) {
+        final String methodName = method.getName();
+        final Class<?>[] methodParameterTypes = method.getParameterTypes();
+        final int methodParameterCount = methodParameterTypes.length;
+        String className = method.getDeclaringClass().getName();
 
-        final Type[] types = new Type[paramerTypes.length];
-        for (int i = 0; i < paramerTypes.length; i++) {
-            types[i] = Type.getType(paramerTypes[i]);
-        }
+        final boolean isStatic = Modifier.isStatic(method.getModifiers());
+        final String[] methodParametersNames = new String[methodParameterCount];
 
-        final String[] parameterNames = new String[paramerTypes.length];
-        String className = clazz.getName();
         int lastDotIndex = className.lastIndexOf(".");
         className = className.substring(lastDotIndex + 1) + ".class";
-
         InputStream is = clazz.getResourceAsStream(className);
-
         try {
-            ClassReader classReader = new ClassReader(is);
-            classReader.accept(new ClassVisitor(Opcodes.ASM4) {
-                @Override
+            ClassReader cr = new ClassReader(is);
+            ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_MAXS);
+            cr.accept(new ClassAdapter(cw) {
                 public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
-                    Type[] argumentTypes = Type.getArgumentTypes(desc);
-                    if (!method.getName().equals(name) || !Arrays.equals(argumentTypes, types)) {
-                        return null;
+
+                    MethodVisitor mv = super.visitMethod(access, name, desc, signature, exceptions);
+
+                    final Type[] argTypes = Type.getArgumentTypes(desc);
+
+                    // if parameter type not match
+                    if (!methodName.equals(name) || !matchTypes(argTypes, methodParameterTypes)) {
+                        return mv;
                     }
-
-                    return new MethodVisitor(Opcodes.ASM4) {
-                        @Override
+                    return new MethodAdapter(mv) {
                         public void visitLocalVariable(String name, String desc, String signature, Label start, Label end, int index) {
-                            //super.visitLocalVariable(name, desc, signature, start, end, index);
-
-                            if (Modifier.isStatic(method.getModifiers())) {
-                                parameterNames[index] = name;
-                            } else if (index > 0) {
-                                parameterNames[index - 1] = name;
+                            //if method is static,then the first argument is parameter;if not,the first argument is [this],
+                            int methodParameterIndex = isStatic ? index : index - 1;
+                            if (0 <= methodParameterIndex && methodParameterIndex < methodParameterCount) {
+                                methodParametersNames[methodParameterIndex] = name;
                             }
+                            super.visitLocalVariable(name, desc, signature, start, end, index);
                         }
                     };
                 }
             }, 0);
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
-        return parameterNames;
+        return methodParametersNames;
     }
 
-    private static boolean matchTypes() {
+    /**
+     * is parameter match or not
+     */
+    private static boolean matchTypes(Type[] types, Class<?>[] parameterTypes) {
+        if (types.length != parameterTypes.length) {
+            return false;
+        }
+        for (int i = 0; i < types.length; i++) {
+            if (!Type.getType(parameterTypes[i]).equals(types[i])) {
+                return false;
+            }
+        }
         return true;
     }
+
 }

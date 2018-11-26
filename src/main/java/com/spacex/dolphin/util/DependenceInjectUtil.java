@@ -7,15 +7,15 @@ import java.lang.reflect.Field;
 import java.util.Map;
 
 public class DependenceInjectUtil {
-    public static void doInject(Map<String, Object> beanMapFactory) {
-        if (beanMapFactory == null) {
+    public static void doInject(Map<String, Object> beanInstanceMapFactory) {
+        if (beanInstanceMapFactory == null || beanInstanceMapFactory.isEmpty()) {
             return;
         }
 
-        Map<String, Object> beanInstanceMap = beanMapFactory;
+        Map<String, Object> beanInstanceMap = beanInstanceMapFactory;
 
-        beanInstanceMap.forEach((beanName, beanClazz) -> {
-            Field[] fields = beanClazz.getClass().getDeclaredFields();
+        beanInstanceMap.forEach((beanName, beanInstance) -> {
+            Field[] fields = beanInstance.getClass().getDeclaredFields();
             for (Field field : fields) {
                 if (!field.isAnnotationPresent(Autowired.class)) {
                     continue;
@@ -33,7 +33,7 @@ public class DependenceInjectUtil {
 
                 if (beanInstanceMap.get(realBeanName) != null) {
                     try {
-                        field.set(beanClazz, beanInstanceMap.get(realBeanName));
+                        field.set(beanInstance, beanInstanceMap.get(realBeanName));
                     } catch (IllegalAccessException e) {
                         e.printStackTrace();
                     }

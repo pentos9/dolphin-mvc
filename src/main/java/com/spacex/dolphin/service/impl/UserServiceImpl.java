@@ -9,6 +9,6 @@ import java.util.Random;
 public class UserServiceImpl implements UserService {
     @Override
     public String search(String name) {
-        return "User" + new Random().nextInt(1000);
+        return "User-" + new Random().nextInt(1000);
     }
 }

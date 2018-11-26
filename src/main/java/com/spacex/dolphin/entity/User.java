@@ -1,4 +1,4 @@
-package com.spacex.dolphin.bean;
+package com.spacex.dolphin.entity;
 
 import com.spacex.dolphin.annotation.Component;
 
